@@ -352,13 +352,15 @@ function Library:AddDropdown(tab, options)
     button.Font = Enum.Font.Gotham
     button.Parent = container
 
-    local selectedValue = options.Default or options.Values[1]
+    local selectedValue = options.Default or (options.Values and options.Values[1] or "")
 
     button.MouseButton1Click:Connect(function()
         -- Simple dropdown toggle logic
-        button.Text = options.Values[math.random(1, #options.Values)]
-        if options.Callback then
-            options.Callback(button.Text)
+        if options.Values and #options.Values > 0 then
+            button.Text = options.Values[math.random(1, #options.Values)]
+            if options.Callback then
+                options.Callback(button.Text)
+            end
         end
     end)
 
