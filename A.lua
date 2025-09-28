@@ -90,7 +90,7 @@ do
                     Size = UDim2.new(1, 0, 0, 0);
                     BorderSizePixel = 0;
                     BackgroundColor3 = options.bgcolor;
-                    ClipsDescendants = false;
+                    ClipsDescendants = true;
                     library:Create('UIListLayout', {
                         Name = 'List';
                         SortOrder = Enum.SortOrder.LayoutOrder;
@@ -925,6 +925,60 @@ do
 
             return {
                 Refresh = reload;
+            }
+        end
+
+        function types:ScrollableContainer(name, maxHeight)
+            local container = library:Create('Frame', {
+                Name = name or 'ScrollableContainer';
+                BackgroundTransparency = 1;
+                Size = UDim2.new(1, 0, 0, 0);
+                LayoutOrder = self:GetOrder();
+                library:Create('ScrollingFrame', {
+                    Name = 'ScrollFrame';
+                    BackgroundTransparency = 1;
+                    BorderSizePixel = 0;
+                    Size = UDim2.new(1, 0, 0, maxHeight or 200);
+                    Position = UDim2.new(0, 0, 0, 0);
+                    ScrollBarThickness = 5;
+                    CanvasSize = UDim2.new(1, 0, 0, 0);
+                    library:Create('UIListLayout', {
+                        Name = 'List';
+                        SortOrder = Enum.SortOrder.LayoutOrder;
+                    })
+                });
+                Parent = self.container;
+            })
+
+            local scrollFrame = container.ScrollFrame
+            local listLayout = scrollFrame.List
+
+            -- Function to update canvas size
+            local function updateCanvasSize()
+                local y = 0
+                for _, child in ipairs(scrollFrame:GetChildren()) do
+                    if not child:IsA('UIListLayout') then
+                        y = y + child.AbsoluteSize.Y
+                    end
+                end
+                scrollFrame.CanvasSize = UDim2.new(1, 0, 0, y)
+            end
+
+            -- Function to add elements to scrollable container
+            local function addElement(element)
+                element.Parent = scrollFrame
+                updateCanvasSize()
+            end
+
+            -- Connect to layout changes
+            listLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(updateCanvasSize)
+
+            self:Resize()
+
+            return {
+                AddElement = addElement;
+                GetContainer = function() return scrollFrame end;
+                UpdateSize = updateCanvasSize;
             }
         end
     end
