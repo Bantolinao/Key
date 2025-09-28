@@ -21,7 +21,7 @@ local function createSimpleUI()
 
         local titleBar = Instance.new("Frame")
         titleBar.Name = "TitleBar"
-        titleBar.Size = UDim2.fromOffset(mainFrame.Size.X.Offset, 30)
+        titleBar.Size = UDim2.new(1, 0, 0, 30)
         titleBar.Position = UDim2.fromOffset(0, 0)
         titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
         titleBar.BorderSizePixel = 0
@@ -29,7 +29,7 @@ local function createSimpleUI()
 
         local titleLabel = Instance.new("TextLabel")
         titleLabel.Name = "TitleLabel"
-        titleLabel.Size = UDim2.fromOffset(titleBar.Size.X.Offset - 60, 25)
+        titleLabel.Size = UDim2.new(1, -70, 0, 25)
         titleLabel.Position = UDim2.fromOffset(10, 2)
         titleLabel.BackgroundTransparency = 1
         titleLabel.Text = config.Title or "Window"
@@ -42,7 +42,7 @@ local function createSimpleUI()
         local closeButton = Instance.new("TextButton")
         closeButton.Name = "CloseButton"
         closeButton.Size = UDim2.fromOffset(25, 25)
-        closeButton.Position = UDim2.fromOffset(titleBar.Size.X.Offset - 30, 2)
+        closeButton.Position = UDim2.new(1, -30, 0, 2)
         closeButton.BackgroundTransparency = 1
         closeButton.Text = "X"
         closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -52,7 +52,7 @@ local function createSimpleUI()
 
         local tabContainer = Instance.new("Frame")
         tabContainer.Name = "TabContainer"
-        tabContainer.Size = UDim2.fromOffset(150, mainFrame.Size.Y.Offset - 30)
+        tabContainer.Size = UDim2.new(0, 150, 1, -30)
         tabContainer.Position = UDim2.fromOffset(0, 30)
         tabContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         tabContainer.BorderSizePixel = 0
@@ -60,7 +60,7 @@ local function createSimpleUI()
 
         local contentArea = Instance.new("Frame")
         contentArea.Name = "ContentArea"
-        contentArea.Size = UDim2.fromOffset(mainFrame.Size.X.Offset - 150, mainFrame.Size.Y.Offset - 30)
+        contentArea.Size = UDim2.new(1, -150, 1, -30)
         contentArea.Position = UDim2.fromOffset(150, 30)
         contentArea.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
         contentArea.BorderSizePixel = 0
@@ -133,7 +133,7 @@ local function createSimpleUI()
             function tab:AddButton(buttonConfig)
                 local buttonFrame = Instance.new("Frame")
                 buttonFrame.Name = "ButtonFrame"
-                buttonFrame.Size = UDim2.fromOffset(contentArea.Size.X.Offset - 20, 40)
+                buttonFrame.Size = UDim2.new(1, -20, 0, 40)
                 buttonFrame.Position = UDim2.fromOffset(10, #self.Elements * 45)
                 buttonFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
                 buttonFrame.BorderSizePixel = 0
@@ -141,7 +141,7 @@ local function createSimpleUI()
 
                 local button = Instance.new("TextButton")
                 button.Name = "Button"
-                button.Size = UDim2.fromOffset(buttonFrame.Size.X.Offset - 10, 30)
+                button.Size = UDim2.new(1, -10, 0, 30)
                 button.Position = UDim2.fromOffset(5, 5)
                 button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
                 button.BorderSizePixel = 0
@@ -170,7 +170,7 @@ local function createSimpleUI()
             function tab:AddParagraph(paragraphConfig)
                 local paragraphFrame = Instance.new("Frame")
                 paragraphFrame.Name = "ParagraphFrame"
-                paragraphFrame.Size = UDim2.fromOffset(contentArea.Size.X.Offset - 20, 60)
+                paragraphFrame.Size = UDim2.new(1, -20, 0, 60)
                 paragraphFrame.Position = UDim2.fromOffset(10, #self.Elements * 65)
                 paragraphFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
                 paragraphFrame.BorderSizePixel = 0
@@ -178,7 +178,7 @@ local function createSimpleUI()
 
                 local titleLabel = Instance.new("TextLabel")
                 titleLabel.Name = "Title"
-                titleLabel.Size = UDim2.fromOffset(paragraphFrame.Size.X.Offset - 10, 20)
+                titleLabel.Size = UDim2.new(1, -10, 0, 20)
                 titleLabel.Position = UDim2.fromOffset(5, 5)
                 titleLabel.BackgroundTransparency = 1
                 titleLabel.Text = paragraphConfig.Title or "Title"
@@ -190,7 +190,7 @@ local function createSimpleUI()
 
                 local contentLabel = Instance.new("TextLabel")
                 contentLabel.Name = "Content"
-                contentLabel.Size = UDim2.fromOffset(paragraphFrame.Size.X.Offset - 10, 30)
+                contentLabel.Size = UDim2.new(1, -10, 0, 30)
                 contentLabel.Position = UDim2.fromOffset(5, 25)
                 contentLabel.BackgroundTransparency = 1
                 contentLabel.Text = paragraphConfig.Content or "Content"
@@ -233,13 +233,16 @@ local function createSimpleUI()
         end
 
         function window:Notify(notifyConfig)
+            local playerGui = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+            if not playerGui then return end
+
             local notification = Instance.new("Frame")
             notification.Name = "Notification"
             notification.Size = UDim2.fromOffset(300, 80)
-            notification.Position = UDim2.fromOffset(game.Players.LocalPlayer.PlayerGui.AbsoluteSize.X - 320, 20)
+            notification.Position = UDim2.new(0, playerGui.AbsoluteSize.X - 320, 0, 20)
             notification.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
             notification.BorderSizePixel = 0
-            notification.Parent = game.Players.LocalPlayer.PlayerGui
+            notification.Parent = playerGui
 
             local titleLabel = Instance.new("TextLabel")
             titleLabel.Name = "Title"
@@ -312,13 +315,16 @@ local function createSimpleUI()
     end
 
     function ui:Notify(config)
+        local playerGui = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+        if not playerGui then return end
+
         local notification = Instance.new("Frame")
         notification.Name = "Notification"
         notification.Size = UDim2.fromOffset(300, 80)
-        notification.Position = UDim2.fromOffset(game.Players.LocalPlayer.PlayerGui.AbsoluteSize.X - 320, 20)
+        notification.Position = UDim2.new(0, playerGui.AbsoluteSize.X - 320, 0, 20)
         notification.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         notification.BorderSizePixel = 0
-        notification.Parent = game.Players.LocalPlayer.PlayerGui
+        notification.Parent = playerGui
 
         local titleLabel = Instance.new("TextLabel")
         titleLabel.Name = "Title"
