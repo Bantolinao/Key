@@ -932,7 +932,7 @@ do
             local container = library:Create('Frame', {
                 Name = name or 'ScrollableContainer';
                 BackgroundTransparency = 1;
-                Size = UDim2.new(1, 0, 0, maxHeight or 200);
+                Size = UDim2.new(1, 0, 0, 0);
                 LayoutOrder = self:GetOrder();
                 library:Create('ScrollingFrame', {
                     Name = 'ScrollFrame';
@@ -941,15 +941,11 @@ do
                     Size = UDim2.new(1, 0, 0, maxHeight or 200);
                     Position = UDim2.new(0, 0, 0, 0);
                     ScrollBarThickness = 5;
-                    ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100);
                     CanvasSize = UDim2.new(1, 0, 0, 0);
-                    BackgroundColor3 = library.options.bgcolor;
-                    BorderColor3 = library.options.bordercolor;
                     library:Create('UIListLayout', {
                         Name = 'List';
                         SortOrder = Enum.SortOrder.LayoutOrder;
-                        Padding = UDim.new(0, 2);
-                    });
+                    })
                 });
                 Parent = self.container;
             })
@@ -962,79 +958,10 @@ do
                 local y = 0
                 for _, child in ipairs(scrollFrame:GetChildren()) do
                     if not child:IsA('UIListLayout') then
-                        y = y + child.AbsoluteSize.Y + 2 -- Add padding
+                        y = y + child.AbsoluteSize.Y
                     end
                 end
-                scrollFrame.CanvasSize = UDim2.new(1, 0, 0, math.max(y, maxHeight or 200))
-            end
-
-            -- Function to add toggle elements to scrollable container (matching UI library design)
-            local function addToggle(toggleName, toggleOptions)
-                local toggleFrame = library:Create('Frame', {
-                    Name = toggleName;
-                    BackgroundTransparency = 1;
-                    Size = UDim2.new(1, 0, 0, 25);
-                    LayoutOrder = #scrollFrame:GetChildren();
-                    library:Create('TextLabel', {
-                        Name = 'Label';
-                        Text = toggleName;
-                        Size = UDim2.new(1, -30, 1, 0);
-                        Position = UDim2.new(0, 5, 0, 0);
-                        BackgroundTransparency = 1;
-                        TextColor3 = library.options.textcolor;
-                        Font = library.options.font;
-                        TextSize = library.options.fontsize;
-                        TextStrokeTransparency = library.options.textstroke;
-                        TextStrokeColor3 = library.options.strokecolor;
-                        TextXAlignment = Enum.TextXAlignment.Left;
-                    });
-                    library:Create('TextButton', {
-                        Name = 'Toggle';
-                        Text = '';
-                        Size = UDim2.new(0, 20, 0, 20);
-                        Position = UDim2.new(1, -25, 0, 2);
-                        TextColor3 = library.options.textcolor;
-                        BackgroundColor3 = library.options.bgcolor;
-                        BorderColor3 = library.options.bordercolor;
-                        Font = library.options.font;
-                        TextSize = library.options.fontsize;
-                        TextStrokeTransparency = library.options.textstroke;
-                        TextStrokeColor3 = library.options.strokecolor;
-                        library:Create('TextLabel', {
-                            Name = 'Checkmark';
-                            Text = '';
-                            Size = UDim2.new(1, 0, 1, 0);
-                            BackgroundTransparency = 1;
-                            TextColor3 = library.options.textcolor;
-                            Font = library.options.font;
-                            TextSize = library.options.fontsize;
-                            TextStrokeTransparency = library.options.textstroke;
-                            TextStrokeColor3 = library.options.strokecolor;
-                        });
-                    });
-                    Parent = scrollFrame;
-                })
-
-                -- Toggle functionality
-                local location = toggleOptions.location or self.flags
-                local flag = toggleOptions.flag or ""
-                local callback = toggleOptions.callback or function() end
-                location[flag] = location[flag] or false
-
-                local checkmark = toggleFrame.Toggle.Checkmark
-                checkmark.Text = location[flag] and utf8.char(10003) or ""
-
-                local function click()
-                    location[flag] = not location[flag]
-                    checkmark.Text = location[flag] and utf8.char(10003) or ""
-                    callback(location[flag])
-                end
-
-                toggleFrame.Toggle.MouseButton1Click:connect(click)
-                library.callbacks[flag] = click
-
-                updateCanvasSize()
-                return toggleFrame
+                scrollFrame.CanvasSize = UDim2.new(1, 0, 0, y)
             end
 
             -- Function to add elements to scrollable container
@@ -1050,7 +977,6 @@ do
 
             return {
                 AddElement = addElement;
-                AddToggle = addToggle;
                 GetContainer = function() return scrollFrame end;
                 UpdateSize = updateCanvasSize;
             }
